@@ -1,10 +1,11 @@
 ﻿using Castle.DynamicProxy;
+using Core.Interceptors;
 
-namespace InvocationApp.Aspects
+namespace Core.Aspects
 {
-    public class DefensiveProgrammingAspect : IInterceptor
+    public class DefensiveProgrammingAspect : MethodInterception
     {
-        public void Intercept(IInvocation invocation)
+        public override void OnBefore(IInvocation invocation)
         {
             var parameters = invocation.Arguments;
 
@@ -15,7 +16,7 @@ namespace InvocationApp.Aspects
                     throw new ArgumentNullException();
                 }
             }
-            Console.WriteLine("Null check has been completed for {0}",invocation.Method.Name);
+            Console.WriteLine("Null check has been completed for {0}", invocation.Method.Name);
             Console.WriteLine();
         }
     }

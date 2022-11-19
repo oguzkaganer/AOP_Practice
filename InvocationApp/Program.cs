@@ -1,6 +1,5 @@
-﻿using Castle.DynamicProxy;
+﻿using Autofac;
 using Entities;
-using InvocationApp.Aspects;
 
 namespace InvocationApp
 {
@@ -8,9 +7,6 @@ namespace InvocationApp
     {
         static void Main(string[] args)
         {
-            var proxy = new ProxyGenerator();
-            var aspect = proxy.CreateClassProxy<Employee>(new DefensiveProgrammingAspect());
-            var aspect2 = proxy.CreateClassProxy<Employee>(new InterceptionAspect());
             var emp1 = new Employee
             {
                 Id = 1,
@@ -18,8 +14,14 @@ namespace InvocationApp
                 LastName = "ER"
             };
 
-            aspect.Add(emp1.Id,emp1.FirstName,emp1.LastName);
-            aspect2.Add(emp1.Id,emp1.FirstName,emp1.LastName);
+            var builder = new ContainerBuilder();
+            builder.RegisterModule(new DefaultModule());
+
+            var container = builder.Build();
+            var willBeIntercepted = container.Resolve<IEmployee>();
+
+            willBeIntercepted.Add(emp1.Id, emp1.FirstName, emp1.LastName);
+
 
             Console.ReadKey();
         }
